@@ -1,0 +1,25 @@
+[build-system]
+requires = [
+    "setuptools>=64",
+    "setuptools_scm[toml]>=8",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "audiovlm-demo"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+]
+requires-python = "~=3.11"
+
+dynamic = ["version"]
+
+[project.urls]
+
+Repository = "https://github.com/Quansight/genai-demo-audio-vlm"
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit"
+]
