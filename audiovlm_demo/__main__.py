@@ -1,8 +1,9 @@
-from audiovlm_demo import AudioVLM
+from audiovlm_demo import AudioVLM, Config
 
 
 def main():
-    A = AudioVLM()
+    config = Config.from_file("config.toml")
+    A = AudioVLM(config=config)
     print("needs more reverb")
 
 
