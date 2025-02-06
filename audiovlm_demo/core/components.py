@@ -1,4 +1,5 @@
 import gc
+import re
 
 from audiovlm_demo.core.config import Config
 
@@ -36,3 +37,27 @@ class AudioVLM:
             self.model_store["Model"] = None
             self.model_store["Processor"] = None
             self.model_store["Loaded"] = False
+
+    @classmethod
+    def parse_points(cls, points_str: str):
+        # Regex to extract each <points> tag with multiple x and y pairs
+        point_tags = re.findall(r"<points (.*?)>(.*?)</points>", points_str)
+        if len(point_tags) == 0:
+            point_tags = re.findall(r"<point (.*?)>(.*?)</point>", points_str)
+        parsed_points = []
+        if len(point_tags) == 0:
+            return None
+
+        for attributes, label in point_tags:
+            coordinates = re.findall(r'x\d+="(.*?)" y\d+="(.*?)"', attributes)
+            if not coordinates:
+                single_coordinate = re.findall(r'x="(.*?)" y="(.*?)"', attributes)
+                if single_coordinate:
+                    coordinates = [single_coordinate[0]]
+            parsed_points.append(
+                {
+                    "label": label,
+                    "coordinates": [(float(x), float(y)) for x, y in coordinates],
+                }
+            )
+        return parsed_points
