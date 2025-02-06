@@ -26,6 +26,10 @@ dependencies:
   - jhsingle-native-proxy>=0.8.2
   - nbconvert
   - librosa
+  - pydantic>=2
+  # - pydantic-core # Will uncomment this if it is necessary
+  - pydantic-settings>=2
+  - tomlkit
   - pip:
       - bitsandbytes
       - flash-attn
