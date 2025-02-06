@@ -1,4 +1,8 @@
+import gc
+
 from audiovlm_demo.core.config import Config
+
+import torch
 
 
 class AudioVLM:
@@ -19,3 +23,16 @@ class AudioVLM:
                 "Model": None,
                 "Processor": None,
             }
+
+    def model_cleanup(self):
+        # global model_info_pane # Placeholder for Panel UI
+        if self.model_store["Model"]:
+            # Placeholder for Panel UI
+            # model_info_pane.object = "<p><b>No Model Loaded</b></p>"
+            del self.model_store["Model"]
+            del self.model_store["Processor"]
+            gc.collect()
+            torch.cuda.empty_cache()
+            self.model_store["Model"] = None
+            self.model_store["Processor"] = None
+            self.model_store["Loaded"] = False
