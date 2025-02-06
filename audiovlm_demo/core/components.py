@@ -1,4 +1,4 @@
-from audiovlm_demo import Config
+from audiovlm_demo.core.config import Config
 
 
 class AudioVLM:
