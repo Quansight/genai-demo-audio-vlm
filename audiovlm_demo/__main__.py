@@ -1,4 +1,8 @@
+from audiovlm_demo import AudioVLM
+
+
 def main():
+    A = AudioVLM()
     print("needs more reverb")
 
 
