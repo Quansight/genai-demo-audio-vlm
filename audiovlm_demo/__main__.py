@@ -1,10 +1,11 @@
-from audiovlm_demo import AudioVLM, Config
+from audiovlm_demo import AudioVLM, AudioVLMUI, Config
 
 
 def main():
     config = Config.from_file("config.toml")
     A = AudioVLM(config=config)
     A.model_cleanup()
+    UI = AudioVLMUI()
     print("needs more reverb")
 
 
