@@ -1,11 +1,11 @@
-import panel as pn
-from audiovlm_demo.core.components import AudioVLM
-
 import io
 
-from PIL import Image
 import librosa
 import numpy as np
+import panel as pn
+from PIL import Image, ImageDraw
+
+from audiovlm_demo.core.components import AudioVLM
 
 pn.extension("filedropper")
 
