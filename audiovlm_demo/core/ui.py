@@ -39,6 +39,15 @@ class AudioVLMUI:
         self.image_preview_html = pn.pane.HTML("<p></p>")
         self.file_dropper.param.watch(self.display_image, "value")
 
+        with open("main.html", "r") as f:
+            header_html = f.read().replace("\n", "")
+
+        self.header_pane = pn.pane.HTML(
+            header_html,
+            width_policy="max",
+            sizing_mode="stretch_width",
+        )
+
         self.image_load = pn.Column(
             self.file_dropper,
             pn.Column(
