@@ -5,7 +5,7 @@ def main():
     config = Config.from_file("config.toml")
     A = AudioVLM(config=config)
     A.model_cleanup()
-    UI = AudioVLMUI()
+    UI = AudioVLMUI(engine=A)
     print("needs more reverb")
 
 
