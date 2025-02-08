@@ -80,3 +80,30 @@ class AudioVLMUI:
             self.image_pane.object = None
             self.audio_pane.object = None
             self.audio_pane.visible = False
+
+    def overlay_points(self, points_data):
+        if self.file_dropper.value:
+            file_name, file_content = next(iter(self.file_dropper.value.items()))
+            image = Image.open(io.BytesIO(file_content))
+        else:
+            return
+
+        draw = ImageDraw.Draw(image)
+        width, height = image.size
+
+        for point_data in points_data:
+            label = point_data["label"]
+            for x_percent, y_percent in point_data["coordinates"]:
+                x = (x_percent / 100) * width
+                y = (y_percent / 100) * height
+                radius = int(height / 55)
+                draw.ellipse(
+                    (x - radius, y - radius, x + radius, y + radius), fill="blue"
+                )
+
+            # Optionally, add label text next to the first coordinate
+            # if point_data["coordinates"]:
+            #     x, y = point_data["coordinates"][0]
+            #     draw.text((x, y - 10), label, fill="yellow")
+
+        self.image_pane.object = image
