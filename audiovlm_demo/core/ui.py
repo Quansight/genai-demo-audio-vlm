@@ -65,6 +65,20 @@ class AudioVLMUI:
             height=800,
         )
 
+        self.chat_interface = pn.chat.ChatInterface(
+            # callback=callback_vlm,
+            callback=lambda *args, **kwargs: "needs more reverb",
+            callback_exception="verbose",
+        )
+
+        self.full_interface = pn.Column(
+            self.header_pane,
+            pn.Row(
+                self.left_bar,
+                self.chat_interface,
+            ),
+        ).servable()
+
     def display_image(self, event):
         if self.file_dropper.value:
             if list(self.file_dropper.mime_type.values())[0].split("/")[0] == "image":
