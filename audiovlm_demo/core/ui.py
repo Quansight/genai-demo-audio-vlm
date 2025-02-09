@@ -1,9 +1,12 @@
 import io
+import time
 
 import librosa
 import numpy as np
 import panel as pn
 from PIL import Image, ImageDraw
+import torch
+from transformers import GenerationConfig
 
 from audiovlm_demo.core.components import AudioVLM
 
@@ -130,3 +133,168 @@ class AudioVLMUI:
             #     draw.text((x, y - 10), label, fill="yellow")
 
         self.image_pane.object = image
+
+    def callback_vlm(self, contents: str, user: str, instance: pn.chat.ChatInterface):
+        if not self.engine.model_store["Loaded"]:
+            instance.send(
+                "Loading model; one moment please...",
+                user="System",
+                respond=False,
+            )
+            self.engine.load_model(None)
+            null_and_void = instance.objects.pop()
+
+        if self.toggle_group.value in ["Molmo-7B-D-0924", "Molmo-7B-D-0924-4bit"]:
+            if self.file_dropper.value:
+                if (
+                    list(self.file_dropper.mime_type.values())[0].split("/")[0]
+                    == "image"
+                ):
+                    file_name, file_content = next(
+                        iter(self.file_dropper.value.items())
+                    )
+                    image = Image.open(io.BytesIO(file_content))
+            else:
+                return "Please upload an image using the file dropper in order to talk over that image."
+
+            prompt_full = self.engine.compile_prompt(
+                self.engine.build_chat_history(instance), "User", "Assistant"
+            )
+
+            inputs = self.engine.model_store["Processor"].process(
+                images=[image], text=prompt_full
+            )
+
+            inputs = {
+                k: v.to(self.engine.model_store["Model"].device).unsqueeze(0)
+                for k, v in inputs.items()
+            }
+
+            with torch.autocast(device_type="cuda", enabled=True, dtype=torch.bfloat16):
+                output = self.engine.model_store["Model"].generate_from_batch(
+                    inputs,
+                    GenerationConfig(max_new_tokens=1250, stop_strings="<|endoftext|>"),
+                    tokenizer=self.engine.model_store["Processor"].tokenizer,
+                )
+
+            generated_tokens = output[0, inputs["input_ids"].size(1) :]
+            self.engine.model_store["History"].append(generated_tokens)
+            generated_text = self.engine.model_store["Processor"].tokenizer.decode(
+                generated_tokens, skip_special_tokens=True
+            )
+
+            points_data = self.engine.parse_points(generated_text)
+            if points_data:
+                self.overlay_points(points_data)
+            time.sleep(0.1)
+            return generated_text
+        elif self.toggle_group.value == "Aria":
+            if self.file_dropper.value:
+                if (
+                    list(self.file_dropper.mime_type.values())[0].split("/")[0]
+                    == "image"
+                ):
+                    file_name, file_content = next(
+                        iter(self.file_dropper.value.items())
+                    )
+                    image = Image.open(io.BytesIO(file_content))
+            else:
+                return "Please upload an image using the file dropper in order to talk over that image."
+
+            messages = self.engine.compile_prompt_gguf(
+                self.engine.build_chat_history(instance), "User", "Assistant"
+            )
+            text = self.engine.model_store["Processor"].apply_chat_template(
+                messages, add_generation_prompt=True
+            )
+            inputs = self.engine.model_store["Processor"](
+                text=text, images=image, return_tensors="pt"
+            )
+            inputs["pixel_values"] = inputs["pixel_values"].to(
+                self.engine.model_store["Model"].dtype
+            )
+            inputs = {
+                k: v.to(self.engine.model_store["Model"].device)
+                for k, v in inputs.items()
+            }
+
+            with torch.inference_mode(), torch.cuda.amp.autocast(dtype=torch.bfloat16):
+                output = self.engine.model_store["Model"].generate(
+                    **inputs,
+                    max_new_tokens=500,
+                    stop_strings=["<|im_end|>"],
+                    tokenizer=self.engine.model_store["Processor"].tokenizer,
+                    do_sample=True,
+                    temperature=0.7,
+                )
+                output_ids = output[0][inputs["input_ids"].shape[1] :]
+                result = self.engine.model_store["Processor"].decode(
+                    output_ids, skip_special_tokens=True
+                )
+                result = result.replace("<|im_end|>", "")
+            time.sleep(0.1)
+            return result
+        elif self.toggle_group.value == "Qwen2-Audio":
+            if self.file_dropper.value:
+                if (
+                    list(self.file_dropper.mime_type.values())[0].split("/")[0]
+                    == "audio"
+                ):
+                    _, audio_file_content = next(iter(self.file_dropper.value.items()))
+            else:
+                return "Please attach an audio sample of the appropriate file format"
+
+            messages = self.engine.build_chat_history(instance)[-1]
+            if messages["role"] == "User":
+                text_input = messages["content"]
+            else:
+                return "Error handling input content - please restart application and try again."
+
+            conversation = [
+                {"role": "system", "content": "You are a helpful assistant."},
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "audio", "audio_url": "Filler.wav"},
+                        {"type": "text", "text": text_input},
+                    ],
+                },
+            ]
+            text = self.engine.model_store["Processor"].apply_chat_template(
+                conversation, add_generation_prompt=True, tokenize=False
+            )
+            audios = []
+            for message in conversation:
+                if isinstance(message["content"], list):
+                    for ele in message["content"]:
+                        if ele["type"] == "audio":
+                            try:
+                                audios.append(
+                                    librosa.load(
+                                        io.BytesIO(audio_file_content),
+                                        sr=self.engine.model_store[
+                                            "Processor"
+                                        ].feature_extractor.sampling_rate,
+                                    )[0]
+                                )
+                            except:
+                                return "Error loading audio file, please change file dropper content to appropriate file format"
+
+            inputs = self.engine.model_store["Processor"](
+                text=text, audios=audios, return_tensors="pt", padding=True
+            )
+            inputs.input_ids = inputs.input_ids.to("cuda")
+            inputs["input_ids"] = inputs["input_ids"].to("cuda")
+
+            generate_ids = self.engine.model_store["Model"].generate(
+                **inputs, max_length=256
+            )
+            generate_ids = generate_ids[:, inputs.input_ids.size(1) :]
+
+            response = self.engine.model_store["Processor"].batch_decode(
+                generate_ids,
+                skip_special_tokens=True,
+                clean_up_tokenization_spaces=False,
+            )[0]
+            time.sleep(0.1)
+            return response
