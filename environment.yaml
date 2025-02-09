@@ -36,3 +36,4 @@ dependencies:
       - accelerate
       - sentencepiece
   - ipykernel
+  - watchfiles
