@@ -1,7 +1,6 @@
 import gc
 import re
-
-from audiovlm_demo.core.config import Config
+from typing import Any
 
 import torch
 from transformers import (
@@ -10,6 +9,8 @@ from transformers import (
     BitsAndBytesConfig,
     Qwen2AudioForConditionalGeneration,
 )
+
+from audiovlm_demo.core.config import Config
 
 
 class AudioVLM:
@@ -170,10 +171,11 @@ class AudioVLM:
 
     def compile_prompt_gguf(
         self,
-        history,
-        user_name,
-        assistant_name,
-        system_prompt=None,
+        # TODO: Change `Any` to the correct type
+        history: list[dict[str, Any]],
+        user_name: str,
+        assistant_name: str,
+        system_prompt: str | None = None,
     ):
         if system_prompt is None:
             system_prompt = AudioVLM._default_system_prompt
@@ -204,10 +206,11 @@ class AudioVLM:
 
     def compile_prompt(
         self,
-        history,
-        user_name,
-        assistant_name,
-        system_prompt=None,
+        # TODO: Change `Any` to the correct type
+        history: list[dict[str, Any]],
+        user_name: str,
+        assistant_name: str,
+        system_prompt: str | None = None,
     ):
         if system_prompt is None:
             system_prompt = AudioVLM._default_system_prompt
