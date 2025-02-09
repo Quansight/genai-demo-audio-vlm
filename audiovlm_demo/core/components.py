@@ -165,3 +165,5 @@ class AudioVLM:
             }
             for user_and_object in users_and_objects
         ]
+
+    _default_system_prompt = "You are an unbiased, helpful assistant."
