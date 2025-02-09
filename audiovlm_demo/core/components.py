@@ -167,3 +167,62 @@ class AudioVLM:
         ]
 
     _default_system_prompt = "You are an unbiased, helpful assistant."
+
+    def compile_prompt_gguf(
+        self,
+        history,
+        user_name,
+        assistant_name,
+        system_prompt=None,
+    ):
+        if system_prompt is None:
+            system_prompt = AudioVLM._default_system_prompt
+
+        messages = []
+
+        for i in history:
+            if i["role"] == user_name:
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": [{"text": i["content"], "type": "text"}],
+                    }
+                )
+            elif i["role"] == assistant_name:
+                messages.append(
+                    {
+                        "role": "assistant",
+                        "content": [{"text": i["content"], "type": "text"}],
+                    }
+                )
+            else:
+                pass
+
+        if messages[-1]["role"] == "user":
+            messages[-1]["content"].append({"text": None, "type": "image"})
+        return messages
+
+    def compile_prompt(
+        self,
+        history,
+        user_name,
+        assistant_name,
+        system_prompt=None,
+    ):
+        if system_prompt is None:
+            system_prompt = AudioVLM._default_system_prompt
+
+        texts = [""]
+        for i in history:
+            if i["role"] == user_name:
+                texts.append(f'<|startoftext|>USER: {i["content"]}\nASSISTANT:')
+            elif i["role"] == assistant_name:
+                if i["content"][-13:] == "<|endoftext|>":
+                    texts.append(f'{i["content"]}\n')
+                elif i["content"][-15:] == "<|endoftext|>\n":
+                    texts.append(f'{i["content"]}')
+                else:
+                    texts.append(f'{i["content"]}<|endoftext|>\n')
+            else:
+                pass
+        return "".join(texts)
