@@ -4,8 +4,8 @@ import time
 import librosa
 import numpy as np
 import panel as pn
-from PIL import Image, ImageDraw
 import torch
+from PIL import Image, ImageDraw, ImageFile
 from transformers import GenerationConfig
 
 from audiovlm_demo.core.components import AudioVLM
@@ -134,6 +134,20 @@ class AudioVLMUI:
 
         self.image_pane.object = image
 
+    # TODO: Improve type annotations
+    @classmethod
+    def validate_image_input(
+        cls, file_dropper: pn.widgets.FileDropper
+    ) -> ImageFile.ImageFile | str:
+        if (
+            file_dropper
+            and next(iter(file_dropper.mime_type.values())).split("/")[0] == "image"
+        ):
+            file_name, file_content = next(iter(file_dropper.value.items()))
+            image = Image.open(io.BytesIO(file_content))
+            return image
+        return "Please upload an image using the file dropper in order to talk over that image."
+
     def callback_vlm(self, contents: str, user: str, instance: pn.chat.ChatInterface):
         if not self.engine.model_store["Loaded"]:
             instance.send(
@@ -145,17 +159,12 @@ class AudioVLMUI:
             null_and_void = instance.objects.pop()
 
         if self.toggle_group.value in ["Molmo-7B-D-0924", "Molmo-7B-D-0924-4bit"]:
-            if self.file_dropper.value:
-                if (
-                    list(self.file_dropper.mime_type.values())[0].split("/")[0]
-                    == "image"
-                ):
-                    file_name, file_content = next(
-                        iter(self.file_dropper.value.items())
-                    )
-                    image = Image.open(io.BytesIO(file_content))
+            image_or_error_message = AudioVLMUI.validate_image_input(self.file_dropper)
+            if isinstance(image_or_error_message, str):
+                return image_or_error_message
             else:
-                return "Please upload an image using the file dropper in order to talk over that image."
+                image = image_or_error_message
+                del image_or_error_message
 
             prompt_full = self.engine.compile_prompt(
                 self.engine.build_chat_history(instance), "User", "Assistant"
@@ -189,17 +198,12 @@ class AudioVLMUI:
             time.sleep(0.1)
             return generated_text
         elif self.toggle_group.value == "Aria":
-            if self.file_dropper.value:
-                if (
-                    list(self.file_dropper.mime_type.values())[0].split("/")[0]
-                    == "image"
-                ):
-                    file_name, file_content = next(
-                        iter(self.file_dropper.value.items())
-                    )
-                    image = Image.open(io.BytesIO(file_content))
+            image_or_error_message = AudioVLMUI.validate_image_input(self.file_dropper)
+            if isinstance(image_or_error_message, str):
+                return image_or_error_message
             else:
-                return "Please upload an image using the file dropper in order to talk over that image."
+                image = image_or_error_message
+                del image_or_error_message
 
             messages = self.engine.compile_prompt_gguf(
                 self.engine.build_chat_history(instance), "User", "Assistant"
