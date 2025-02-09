@@ -155,3 +155,13 @@ class AudioVLM:
                 }
             )
         return parsed_points
+
+    # This function signature is up for discussion
+    def build_chat_history(self, users_and_objects: dict):
+        return [
+            {
+                "role": user_and_object["user"],
+                "content": user_and_object["object"],
+            }
+            for user_and_object in users_and_objects
+        ]
