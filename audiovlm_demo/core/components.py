@@ -1,5 +1,6 @@
 import gc
 import re
+import time
 from typing import Any
 
 import torch
@@ -7,6 +8,7 @@ from transformers import (
     AutoModelForCausalLM,
     AutoProcessor,
     BitsAndBytesConfig,
+    GenerationConfig,
     Qwen2AudioForConditionalGeneration,
 )
 
@@ -229,3 +231,35 @@ class AudioVLM:
             else:
                 pass
         return "".join(texts)
+
+    # TODO: Add type annotations
+    def molmo_callback(self, *, image, chat_history):
+        prompt_full = self.compile_prompt(
+            self.build_chat_history(chat_history), "User", "Assistant"
+        )
+
+        inputs = self.model_store["Processor"].process(images=[image], text=prompt_full)
+
+        inputs = {
+            k: v.to(self.model_store["Model"].device).unsqueeze(0)
+            for k, v in inputs.items()
+        }
+
+        with torch.autocast(device_type="cuda", enabled=True, dtype=torch.bfloat16):
+            output = self.model_store["Model"].generate_from_batch(
+                inputs,
+                GenerationConfig(max_new_tokens=1250, stop_strings="<|endoftext|>"),
+                tokenizer=self.model_store["Processor"].tokenizer,
+            )
+
+        generated_tokens = output[0, inputs["input_ids"].size(1) :]
+        self.model_store["History"].append(generated_tokens)
+        generated_text = self.model_store["Processor"].tokenizer.decode(
+            generated_tokens, skip_special_tokens=True
+        )
+
+        points_data = self.parse_points(generated_text)
+        if points_data:
+            self.overlay_points(points_data)
+        time.sleep(0.1)
+        return generated_text

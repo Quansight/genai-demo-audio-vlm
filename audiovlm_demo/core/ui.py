@@ -180,36 +180,16 @@ class AudioVLMUI:
                 image = image_or_error_message
                 del image_or_error_message
 
-            prompt_full = self.engine.compile_prompt(
-                self.engine.build_chat_history(instance), "User", "Assistant"
+            generated_text = self.engine.molmo_callback(
+                image=image,
+                chat_history=[
+                    {
+                        "role": utterance.user,
+                        "content": utterance.object,
+                    }
+                    for utterance in instance.objects
+                ],
             )
-
-            inputs = self.engine.model_store["Processor"].process(
-                images=[image], text=prompt_full
-            )
-
-            inputs = {
-                k: v.to(self.engine.model_store["Model"].device).unsqueeze(0)
-                for k, v in inputs.items()
-            }
-
-            with torch.autocast(device_type="cuda", enabled=True, dtype=torch.bfloat16):
-                output = self.engine.model_store["Model"].generate_from_batch(
-                    inputs,
-                    GenerationConfig(max_new_tokens=1250, stop_strings="<|endoftext|>"),
-                    tokenizer=self.engine.model_store["Processor"].tokenizer,
-                )
-
-            generated_tokens = output[0, inputs["input_ids"].size(1) :]
-            self.engine.model_store["History"].append(generated_tokens)
-            generated_text = self.engine.model_store["Processor"].tokenizer.decode(
-                generated_tokens, skip_special_tokens=True
-            )
-
-            points_data = self.engine.parse_points(generated_text)
-            if points_data:
-                self.overlay_points(points_data)
-            time.sleep(0.1)
             return generated_text
         elif self.toggle_group.value == "Aria":
             image_or_error_message = AudioVLMUI.validate_image_input(self.file_dropper)
