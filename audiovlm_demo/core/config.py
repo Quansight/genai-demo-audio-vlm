@@ -1,8 +1,13 @@
 from pathlib import Path
+from typing import Annotated
 
 import tomlkit
-from pydantic import Field
+from pydantic import AfterValidator
 from pydantic_settings import BaseSettings
+
+from audiovlm_demo.core.utils import resolve_path
+
+_ResolvedPath = Annotated[Path, AfterValidator(resolve_path)]
 
 
 class Config(BaseSettings):
@@ -12,15 +17,15 @@ class Config(BaseSettings):
     Includes paths to downloaded models, among other thnigs.
     """
 
-    model_path: Path = Field(default_factory=Path)
-    aria_model_path: Path = Field(default_factory=Path)
-    qwen_audio_model_path: Path = Field(default_factory=Path)
+    model_path: _ResolvedPath
+    aria_model_path: _ResolvedPath
+    qwen_audio_model_path: _ResolvedPath
 
     # TODO: I would like to remove the quotes in the return type
     # annotation without getting a NameError
     @classmethod
     def from_file(cls, path: str | Path) -> "Config":
-        path = Path(path).expanduser().resolve()
+        path = resolve_path(path)
         if not path.is_file():
             raise FileNotFoundError(f"{path} does not exist.")
 
