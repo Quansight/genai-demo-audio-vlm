@@ -1,9 +1,9 @@
 __all__ = [
     "AudioVLM",
-    "AudioVLMUI",
+    "AudioVLMPanel",
     "Config",
 ]
 
 from audiovlm_demo.core.components import AudioVLM
 from audiovlm_demo.core.config import Config
-from audiovlm_demo.core.ui import AudioVLMUI
+from audiovlm_demo.ui.panel import AudioVLMPanel

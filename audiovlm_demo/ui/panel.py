@@ -10,7 +10,7 @@ from audiovlm_demo.core.components import AudioVLM
 pn.extension("filedropper")
 
 
-class AudioVLMUI:
+class AudioVLMPanel:
     def __init__(self, *, engine: AudioVLM):
         self.engine = engine
 
@@ -175,7 +175,9 @@ class AudioVLMUI:
             null_and_void = instance.objects.pop()  # noqa: F841
 
         if self.toggle_group.value in ["Molmo-7B-D-0924", "Molmo-7B-D-0924-4bit"]:
-            image_or_error_message = AudioVLMUI.validate_image_input(self.file_dropper)
+            image_or_error_message = AudioVLMPanel.validate_image_input(
+                self.file_dropper
+            )
             if isinstance(image_or_error_message, str):
                 return image_or_error_message
             else:
@@ -194,7 +196,9 @@ class AudioVLMUI:
             )
             return generated_text
         elif self.toggle_group.value == "Aria":
-            image_or_error_message = AudioVLMUI.validate_image_input(self.file_dropper)
+            image_or_error_message = AudioVLMPanel.validate_image_input(
+                self.file_dropper
+            )
             if isinstance(image_or_error_message, str):
                 return image_or_error_message
             else:
@@ -213,7 +217,9 @@ class AudioVLMUI:
             )
             return result
         elif self.toggle_group.value == "Qwen2-Audio":
-            audio_or_error_message = AudioVLMUI.validate_audio_input(self.file_dropper)
+            audio_or_error_message = AudioVLMPanel.validate_audio_input(
+                self.file_dropper
+            )
             if isinstance(audio_or_error_message, str):
                 return audio_or_error_message
             else:
