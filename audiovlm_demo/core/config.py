@@ -16,7 +16,7 @@ class Config(BaseSettings):
     aria_model_path: Path = Field(default_factory=Path)
     qwen_audio_model_path: Path = Field(default_factory=Path)
 
-    # I would like to remove the quotes in the return type
+    # TODO: I would like to remove the quotes in the return type
     # annotation without getting a NameError
     @classmethod
     def from_file(cls, path: str | Path) -> "Config":
