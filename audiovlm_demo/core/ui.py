@@ -69,7 +69,7 @@ class AudioVLMUI:
         )
 
         self.chat_interface = pn.chat.ChatInterface(
-            # callback=callback_vlm,
+            # callback=callback_dispatcher,
             callback=lambda *args, **kwargs: "needs more reverb",
             callback_exception="verbose",
         )
@@ -160,7 +160,9 @@ class AudioVLMUI:
         else:
             return "Please attach an audio sample of the appropriate file format"
 
-    def callback_vlm(self, contents: str, user: str, instance: pn.chat.ChatInterface):
+    def callback_dispatcher(
+        self, contents: str, user: str, instance: pn.chat.ChatInterface
+    ):
         if not self.engine.model_store["Loaded"]:
             instance.send(
                 "Loading model; one moment please...",
