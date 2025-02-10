@@ -1,0 +1,64 @@
+<head>
+  <meta charset="UTF-8">
+  <title>Multimodal Language Models</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+    }
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 20px;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    .description {
+      margin: 20px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .description h2 {
+      margin-top: 0;
+      color: #333;
+    }
+    .description p {
+      color: #666;
+      line-height: 1.6;
+    }
+    .model-box {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .model-box p {
+      margin: 0;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    Multimodal Language Models
+  </header>
+
+  <div class="description">
+    <h2>About This App</h2>
+    <p>This Panel app features some of the latest Vision and Audio Language Models to play with to get a sense of how they behave.
+    </p>
+
+    <div class="model-box">
+      <p><b>Molmo-7B-D-0924:</b> The smaller, but powerful, of the Molmo Vision-Language models - understands image contents and can 'point to' and count.</p>
+      <p><b>Molmo-7B-D-0924-4bit:</b> The same underlying model as above, but with quantized loading - meaning it will take up less VRAM, while performing similarly.</p>
+      <p><b>Aria:</b> A 'Mixture of Experts' (MoE) Vision-Language Model that has many more total parameters than Molmo, yet half as many active at a given time. Faster, yet smarter.</p>
+      <p><b>Qwen2-Audio-7B:</b> Qwen2-Audio is an Audio-Language Model, capable of understanding more than just words - it can discern speaker emotion as well as general sounds outside of language.</p>
+    </div>
+  </div>
+</body>
+
