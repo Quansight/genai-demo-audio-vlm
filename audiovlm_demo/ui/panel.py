@@ -6,11 +6,14 @@ import panel as pn
 from PIL import Image, ImageDraw, ImageFile
 
 from audiovlm_demo.core.components import AudioVLM
+from audiovlm_demo.core.utils import resolve_path
 
 pn.extension("filedropper")
 
 
 class AudioVLMPanel:
+    _main_html_path = resolve_path(__file__).parent / "main.html"
+
     def __init__(self, *, engine: AudioVLM):
         self.engine = engine
 
@@ -39,7 +42,7 @@ class AudioVLMPanel:
         self.image_preview_html = pn.pane.HTML("<p></p>")
         self.file_dropper.param.watch(self.display_image, "value")
 
-        with open("main.html", "r") as f:
+        with open(AudioVLMPanel._main_html_path, "r") as f:
             header_html = f.read().replace("\n", "")
 
         self.header_pane = pn.pane.HTML(
