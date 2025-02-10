@@ -336,7 +336,7 @@ class AudioVLM:
                                     ].feature_extractor.sampling_rate,
                                 )[0]
                             )
-                        except:
+                        except:  # noqa: E722
                             return "Error loading audio file, please change file dropper content to appropriate file format"
 
         inputs = self.engine.model_store["Processor"](
