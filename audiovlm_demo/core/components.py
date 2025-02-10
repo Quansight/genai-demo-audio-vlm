@@ -57,8 +57,6 @@ class AudioVLM:
 
         match model_selection:
             case "Molmo-7B-D-0924":
-                # Placeholder for Panel UI
-                # model_info_pane.object = f"<p>Loading {model_selection}...</p>"
                 self.model_store["Processor"] = AutoProcessor.from_pretrained(
                     self.config.model_path,
                     trust_remote_code=True,
@@ -71,12 +69,8 @@ class AudioVLM:
                     torch_dtype=torch.bfloat16,
                     device_map="auto",
                 )
-                # Placeholder for Panel UI
-                # model_info_pane.object = f"<p>{model_selection} loaded.</p>"
                 self.model_store["Loaded"] = True
             case "Molmo-7B-D-0924-4bit":
-                # Placeholder for Panel UI
-                # model_info_pane.object = f"<p>Loading {model_selection}...</p>"
                 self.model_store["Processor"] = AutoProcessor.from_pretrained(
                     self.config.model_path,
                     trust_remote_code=True,
@@ -98,13 +92,8 @@ class AudioVLM:
                     self.config.model_path,
                     **arguments,
                 )
-                # Placeholder for Panel UI
-                # model_info_pane.object = f"<p>{model_selection} loaded.</p>"
                 self.model_store["Loaded"] = True
             case "Aria":
-                # Placeholder for Panel UI
-                # model_info_pane.object = f"<p>Loading {model_selection}...</p>"
-
                 model_id_or_path = self.config.aria_model_path
                 self.model_store["Processor"] = AutoProcessor.from_pretrained(
                     model_id_or_path, trust_remote_code=True
@@ -115,13 +104,8 @@ class AudioVLM:
                     torch_dtype=torch.bfloat16,
                     trust_remote_code=True,
                 )
-                # Placeholder for Panel UI
-                # model_info_pane.object = f"<p>{model_selection} loaded.</p>"
                 self.model_store["Loaded"] = True
             case "Qwen2-Audio":
-                # Placeholder for Panel UI
-                # model_info_pane.object = f"<p>Loading {model_selection}...</p>"
-
                 model_id_or_path = self.config.qwen_audio_model_path
                 self.model_store["Processor"] = AutoProcessor.from_pretrained(
                     model_id_or_path
@@ -131,8 +115,6 @@ class AudioVLM:
                         model_id_or_path, device_map="auto"
                     )
                 )
-                # Placeholder for Panel UI
-                # model_info_pane.object = f"<p>{model_selection} loaded.</p>"
                 self.model_store["Loaded"] = True
             case _:
                 pass

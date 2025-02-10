@@ -28,7 +28,7 @@ class AudioVLMUI:
             behavior="radio",
         )
         self.load_button = pn.widgets.Button(name="Load Model", button_type="primary")
-        self.load_button.on_click(self.engine.load_model)
+        self.load_button.on_click(self._load_model_wrapper)
 
         self.model_info_pane = pn.pane.HTML("<p><b>No Model Loaded</b></p>")
 
@@ -78,6 +78,11 @@ class AudioVLMUI:
                 self.chat_interface,
             ),
         ).servable()
+
+    def _load_model_wrapper(self, event):
+        self.model_info_pane.object = f"<p>Loading {self.toggle_group.value}...</p>"
+        self.engine.load_model(self.toggle_group.value)
+        self.model_info_pane.object = f"<p>{self.toggle_group.value} loaded.</p>"
 
     def display_image(self, event):
         if self.file_dropper.value:
