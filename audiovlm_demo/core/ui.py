@@ -148,6 +148,18 @@ class AudioVLMUI:
             return image
         return "Please upload an image using the file dropper in order to talk over that image."
 
+    # TODO: Improve type annotation
+    @classmethod
+    def validate_audio_input(cls, file_dropper: pn.widgets.FileDropper):
+        if (
+            file_dropper.value
+            and next(iter(file_dropper.mime_type.values())).split("/")[0] == "audio"
+        ):
+            _, audio_file_content = next(iter(file_dropper.value.items()))
+            return audio_file_content
+        else:
+            return "Please attach an audio sample of the appropriate file format"
+
     def callback_vlm(self, contents: str, user: str, instance: pn.chat.ChatInterface):
         if not self.engine.model_store["Loaded"]:
             instance.send(
@@ -239,14 +251,12 @@ class AudioVLMUI:
             time.sleep(0.1)
             return result
         elif self.toggle_group.value == "Qwen2-Audio":
-            if self.file_dropper.value:
-                if (
-                    list(self.file_dropper.mime_type.values())[0].split("/")[0]
-                    == "audio"
-                ):
-                    _, audio_file_content = next(iter(self.file_dropper.value.items()))
+            audio_or_error_message = AudioVLMUI.validate_audio_input(self.file_dropper)
+            if isinstance(audio_or_error_message, str):
+                return audio_or_error_message
             else:
-                return "Please attach an audio sample of the appropriate file format"
+                audio_file_content = audio_or_error_message
+                del audio_or_error_message
 
             messages = self.engine.build_chat_history(instance)[-1]
             if messages["role"] == "User":
