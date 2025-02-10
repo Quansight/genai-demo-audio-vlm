@@ -93,7 +93,7 @@ class AudioVLMUI:
                 file_name, file_content = next(iter(self.file_dropper.value.items()))
                 self.image_preview_html.object = "<p>Audio Track:</p>"
                 audio = librosa.load(io.BytesIO(file_content))
-                self.audio_pane.sample_rate = sample_rate = audio[1]
+                self.audio_pane.sample_rate = audio[1]
                 self.audio_pane.object = np.int16(
                     np.array(audio[0], dtype=np.float32) * 32767
                 )
@@ -115,7 +115,7 @@ class AudioVLMUI:
         width, height = image.size
 
         for point_data in points_data:
-            label = point_data["label"]
+            label = point_data["label"]  # noqa: F841
             for x_percent, y_percent in point_data["coordinates"]:
                 x = (x_percent / 100) * width
                 y = (y_percent / 100) * height
@@ -167,7 +167,7 @@ class AudioVLMUI:
                 respond=False,
             )
             self.engine.load_model(None)
-            null_and_void = instance.objects.pop()
+            null_and_void = instance.objects.pop()  # noqa: F841
 
         if self.toggle_group.value in ["Molmo-7B-D-0924", "Molmo-7B-D-0924-4bit"]:
             image_or_error_message = AudioVLMUI.validate_image_input(self.file_dropper)
