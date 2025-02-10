@@ -69,8 +69,7 @@ class AudioVLMPanel:
         )
 
         self.chat_interface = pn.chat.ChatInterface(
-            # callback=callback_dispatcher,
-            callback=lambda *args, **kwargs: "needs more reverb",
+            callback=self.callback_dispatcher,
             callback_exception="verbose",
         )
 
