@@ -1,3 +1,4 @@
+from __future__ import annotations
 import gc
 import io
 import re
@@ -34,10 +35,8 @@ class Config(BaseSettings):
     aria_model_path: _ResolvedPath
     qwen_audio_model_path: _ResolvedPath
 
-    # TODO: I would like to remove the quotes in the return type
-    # annotation without getting a NameError
     @classmethod
-    def from_file(cls, path: str | Path) -> "Config":
+    def from_file(cls, path: str | Path) -> Config:
         path = resolve_path(path)
         if not path.is_file():
             raise FileNotFoundError(f"{path} does not exist.")
