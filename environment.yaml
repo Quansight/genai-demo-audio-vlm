@@ -27,7 +27,6 @@ dependencies:
   - nbconvert
   - librosa
   - pydantic>=2
-  # - pydantic-core # Will uncomment this if it is necessary
   - pydantic-settings>=2
   - tomlkit
   - pip:
