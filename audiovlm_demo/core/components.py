@@ -192,7 +192,7 @@ class AudioVLM:
         system_prompt: str | None = None,
     ):
         if system_prompt is None:
-            system_prompt = AudioVLM._default_system_prompt
+            system_prompt = self._default_system_prompt
 
         messages = []
 
@@ -227,7 +227,7 @@ class AudioVLM:
         system_prompt: str | None = None,
     ):
         if system_prompt is None:
-            system_prompt = AudioVLM._default_system_prompt
+            system_prompt = self._default_system_prompt
 
         texts = [""]
         for i in history:
