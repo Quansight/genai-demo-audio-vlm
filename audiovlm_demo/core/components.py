@@ -86,13 +86,15 @@ class AudioVLM:
         match model_selection:
             case "Molmo-7B-D-0924":
                 self.model_store["Processor"] = AutoProcessor.from_pretrained(
-                    self.config.model_path,
+                    "allenai/Molmo-7B-D-0924",
+                    # self.config.model_path,
                     trust_remote_code=True,
                     torch_dtype=torch.bfloat16,
                     device_map="auto",
                 )
                 self.model_store["Model"] = AutoModelForCausalLM.from_pretrained(
-                    self.config.model_path,
+                    "allenai/Molmo-7B-D-0924",
+                    # self.config.model_path,
                     trust_remote_code=True,
                     torch_dtype=torch.bfloat16,
                     device_map="auto",
@@ -100,7 +102,8 @@ class AudioVLM:
                 self.model_store["Loaded"] = True
             case "Molmo-7B-D-0924-4bit":
                 self.model_store["Processor"] = AutoProcessor.from_pretrained(
-                    self.config.model_path,
+                    "allenai/Molmo-7B-D-0924",
+                    # self.config.model_path,
                     trust_remote_code=True,
                     torch_dtype=torch.bfloat16,
                     device_map="auto",
@@ -117,7 +120,8 @@ class AudioVLM:
                 )
                 arguments["quantization_config"] = quantization_config
                 self.model_store["Model"] = AutoModelForCausalLM.from_pretrained(
-                    self.config.model_path,
+                    "allenai/Molmo-7B-D-0924",
+                    # self.config.model_path,
                     **arguments,
                 )
                 self.model_store["Loaded"] = True
