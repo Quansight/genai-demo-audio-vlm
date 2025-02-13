@@ -175,16 +175,6 @@ class AudioVLM:
             )
         return parsed_points
 
-    # This function signature is up for discussion
-    def build_chat_history(self, users_and_objects: dict):
-        return [
-            {
-                "role": user_and_object["user"],
-                "content": user_and_object["object"],
-            }
-            for user_and_object in users_and_objects
-        ]
-
     _default_system_prompt = "You are an unbiased, helpful assistant."
 
     def compile_prompt_gguf(
@@ -251,7 +241,9 @@ class AudioVLM:
     # TODO: Add type annotations
     def molmo_callback(self, *, image, chat_history):
         prompt_full = self.compile_prompt(
-            self.build_chat_history(chat_history), "User", "Assistant"
+            chat_history,
+            "User",
+            "Assistant",
         )
 
         inputs = self.model_store["Processor"].process(images=[image], text=prompt_full)
@@ -283,7 +275,9 @@ class AudioVLM:
     # TODO: Add type annotations
     def aria_callback(self, *, image, chat_history):
         messages = self.engine.compile_prompt_gguf(
-            self.engine.build_chat_history(chat_history), "User", "Assistant"
+            chat_history,
+            "User",
+            "Assistant",
         )
         text = self.engine.model_store["Processor"].apply_chat_template(
             messages, add_generation_prompt=True
@@ -317,7 +311,7 @@ class AudioVLM:
 
     # TODO: Add type annotations
     def qwen_callback(self, *, audio_file_content, chat_history):
-        messages = self.engine.build_chat_history(chat_history)[-1]
+        messages = chat_history[-1]
         if messages["role"] == "User":
             text_input = messages["content"]
         else:

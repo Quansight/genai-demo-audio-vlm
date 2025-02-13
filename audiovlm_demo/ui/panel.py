@@ -164,6 +164,15 @@ class AudioVLMPanel:
         else:
             return "Please attach an audio sample of the appropriate file format"
 
+    def build_chat_history(self, instance: pn.chat.ChatInterface):
+        return [
+            {
+                "role": utterance.user,
+                "content": utterance.object,
+            }
+            for utterance in instance.objects
+        ]
+
     def callback_dispatcher(
         self, contents: str, user: str, instance: pn.chat.ChatInterface
     ):
@@ -188,13 +197,7 @@ class AudioVLMPanel:
 
             generated_text = self.engine.molmo_callback(
                 image=image,
-                chat_history=[
-                    {
-                        "role": utterance.user,
-                        "content": utterance.object,
-                    }
-                    for utterance in instance.objects
-                ],
+                chat_history=self.build_chat_history(instance),
             )
             return generated_text
         elif self.toggle_group.value == "Aria":
@@ -209,13 +212,7 @@ class AudioVLMPanel:
 
             result = self.engine.aria_callback(
                 image=image,
-                chat_history=[
-                    {
-                        "role": utterance.user,
-                        "content": utterance.object,
-                    }
-                    for utterance in instance.objects
-                ],
+                chat_history=self.build_chat_history(instance),
             )
             return result
         elif self.toggle_group.value == "Qwen2-Audio":
@@ -229,12 +226,6 @@ class AudioVLMPanel:
                 del audio_or_error_message
             response = self.engine.aria_callback(
                 audio_file_content,
-                chat_history=[
-                    {
-                        "role": utterance.user,
-                        "content": utterance.object,
-                    }
-                    for utterance in instance.objects
-                ],
+                chat_history=self.build_chat_history(instance),
             )
             return response
