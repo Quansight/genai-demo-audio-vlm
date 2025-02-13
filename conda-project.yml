@@ -1,0 +1,21 @@
+name: audiovlm-demo
+environments:
+  default:
+    - environment.yaml
+
+variables:
+  # variables that are specific to jhub-apps
+  JHUB_APP_CONFIG_display_name: Vision Language Model and Multimodal Audio-Language Demo
+  JHUB_APP_CONFIG_description: A simple panel app demonstrator for two VLMs (Molmo and Aria) and the Qwen2-Audio audio-language model.
+  JHUB_APP_CONFIG_framework: panel
+  JHUB_APP_CONFIG_filepath: audiovlm_demo/main.py
+  JHUB_APP_CONFIG_keep_alive: false
+  JHUB_APP_CONFIG_public: false
+  JHUB_APP_CONFIG_thumbnail_path: thumbnail.png
+  # actual environment variables to be used in the deployment of jhub apps application
+  # SOMETHING_FOO: bar
+  # SOMETHING_BAR: beta
+
+commands:
+  # command to run the app locally
+  run-app: panel serve audiovlm_demo/main.py --port 5000 --allow-websocket-origin=127.0.0.1:5000  --server=panel
