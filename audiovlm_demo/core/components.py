@@ -46,6 +46,10 @@ class Config(BaseSettings):
 
 
 class AudioVLM:
+    molmo_model_id: str = "allenai/Molmo-7B-D-0924"
+    aria_model_id: str = "rhymes-ai/Aria"
+    qwen_audio_model_id: str = "Qwen/Qwen2-Audio-7B-Instruct"
+
     def __init__(self, *, config: Config, model_store: dict | None = None):
         self.config = config
         model_store_keys = {"Loaded", "History", "Model", "Processor"}
@@ -85,25 +89,24 @@ class AudioVLM:
 
         match model_selection:
             case "Molmo-7B-D-0924":
+                model_id_or_path = self.molmo_model_id
                 self.model_store["Processor"] = AutoProcessor.from_pretrained(
-                    "allenai/Molmo-7B-D-0924",
-                    # self.config.model_path,
+                    model_id_or_path,
                     trust_remote_code=True,
                     torch_dtype=torch.bfloat16,
                     device_map="auto",
                 )
                 self.model_store["Model"] = AutoModelForCausalLM.from_pretrained(
-                    "allenai/Molmo-7B-D-0924",
-                    # self.config.model_path,
+                    model_id_or_path,
                     trust_remote_code=True,
                     torch_dtype=torch.bfloat16,
                     device_map="auto",
                 )
                 self.model_store["Loaded"] = True
             case "Molmo-7B-D-0924-4bit":
+                model_id_or_path = self.molmo_model_id
                 self.model_store["Processor"] = AutoProcessor.from_pretrained(
-                    "allenai/Molmo-7B-D-0924",
-                    # self.config.model_path,
+                    model_id_or_path,
                     trust_remote_code=True,
                     torch_dtype=torch.bfloat16,
                     device_map="auto",
@@ -120,13 +123,12 @@ class AudioVLM:
                 )
                 arguments["quantization_config"] = quantization_config
                 self.model_store["Model"] = AutoModelForCausalLM.from_pretrained(
-                    "allenai/Molmo-7B-D-0924",
-                    # self.config.model_path,
+                    model_id_or_path,
                     **arguments,
                 )
                 self.model_store["Loaded"] = True
             case "Aria":
-                model_id_or_path = self.config.aria_model_path
+                model_id_or_path = self.aria_model_id
                 self.model_store["Processor"] = AutoProcessor.from_pretrained(
                     model_id_or_path, trust_remote_code=True
                 )
@@ -138,7 +140,7 @@ class AudioVLM:
                 )
                 self.model_store["Loaded"] = True
             case "Qwen2-Audio":
-                model_id_or_path = self.config.qwen_audio_model_path
+                model_id_or_path = self.qwen_audio_model_id
                 self.model_store["Processor"] = AutoProcessor.from_pretrained(
                     model_id_or_path
                 )
