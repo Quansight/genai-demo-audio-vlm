@@ -34,5 +34,7 @@ dependencies:
       - flash-attn
       - accelerate
       - sentencepiece
+      # Required for Aria
+      - protobuf
   - ipykernel
   - watchfiles
