@@ -13,3 +13,5 @@ COPY --chown=$MAMBA_USER:$MAMBA_USER pyproject.toml .
 COPY --chown=$MAMBA_USER:$MAMBA_USER README.md .
 
 RUN pip install --no-cache-dir .
+
+EXPOSE 5006
