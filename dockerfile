@@ -16,4 +16,4 @@ RUN pip install --no-cache-dir .
 
 EXPOSE 5006
 
-CMD panel serve --dev audiovlm_demo/main.py --address 127.0.0.1 --allow-websocket-origin=127.0.0.1:5006
+CMD panel serve --dev audiovlm_demo/main.py --address 0.0.0.0 --allow-websocket-origin=127.0.0.1:5006
