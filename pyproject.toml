@@ -17,6 +17,11 @@ dynamic = ["version"]
 
 [tool.setuptools_scm]
 
+# TODO: If there is a better way to implement including the html file,
+# I would like that to happen.
+[tool.setuptools.package-data]
+"*" = ["*.html"]
+
 [project.urls]
 
 Repository = "https://github.com/Quansight/genai-demo-audio-vlm"
