@@ -1,0 +1,7 @@
+services:
+  demo:
+    build: .
+    ports:
+      - "5006:5006"
+    # expose:
+    #   - 5006
