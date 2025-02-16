@@ -12,7 +12,10 @@ COPY --chown=$MAMBA_USER:$MAMBA_USER audiovlm_demo ./audiovlm_demo
 COPY --chown=$MAMBA_USER:$MAMBA_USER pyproject.toml .
 COPY --chown=$MAMBA_USER:$MAMBA_USER README.md .
 
-RUN pip install --no-cache-dir .
+# TODO: Fix this.
+# See https://setuptools-scm.readthedocs.io/en/stable/usage/#with-dockerpodman
+ARG PSEUDO_VERSION=1
+RUN SETUPTOOLS_SCM_PRETEND_VERSION_FOR_AUDIOVLM_DEMO=${PSEUDO_VERSION} pip install --no-cache-dir .
 
 EXPOSE 5006
 
