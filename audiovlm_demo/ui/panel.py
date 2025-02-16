@@ -81,6 +81,9 @@ class AudioVLMPanel:
             ),
         ).servable()
 
+    def __panel__(self):
+        return self.full_interface
+
     def _load_model_wrapper(self, event):
         self.model_info_pane.object = f"<p>Loading {self.toggle_group.value}...</p>"
         self.engine.load_model(self.toggle_group.value)
