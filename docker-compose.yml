@@ -3,5 +3,8 @@ services:
     build: .
     ports:
       - "5006:5006"
-    # expose:
-    #   - 5006
+    volumes:
+      - model-data:/home/mambauser/.cache
+
+volumes:
+  model-data:
