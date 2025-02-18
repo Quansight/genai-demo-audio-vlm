@@ -1,1 +1,6 @@
 name: Build and push image to Google Artifact Registry
+
+on:
+  push:
+    branches:
+      - main
