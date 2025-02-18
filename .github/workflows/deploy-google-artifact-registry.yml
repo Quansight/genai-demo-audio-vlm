@@ -20,3 +20,10 @@ jobs:
         uses: docker/setup-buildx-action@v3
         with:
           driver-opts: network=host
+
+      - name: Compute image tag
+        id: compute-image-tag
+        run: |
+          short_sha=$(git rev-parse --short ${{ github.sha }})
+          echo "tag=${{ github.triggering_actor }}/audiovlm-demo:$short_sha" >> $GITHUB_OUTPUT
+          echo "short_sha=$short_sha" >> $GITHUB_OUTPUT          
