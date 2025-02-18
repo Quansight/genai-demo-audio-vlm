@@ -27,3 +27,11 @@ jobs:
           short_sha=$(git rev-parse --short ${{ github.sha }})
           echo "tag=${{ github.triggering_actor }}/audiovlm-demo:$short_sha" >> $GITHUB_OUTPUT
           echo "short_sha=$short_sha" >> $GITHUB_OUTPUT          
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          file: dockerfile
+          tags: localhost:5000/${{ steps.compute-image-tag.outputs.tag }}
