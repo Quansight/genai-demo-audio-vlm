@@ -35,3 +35,8 @@ jobs:
           push: true
           file: dockerfile
           tags: localhost:5000/${{ steps.compute-image-tag.outputs.tag }}
+
+      - name: Authenticate into Google Cloud
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_ARTIFACTS_REGISTRY_SERVICE_ACCOUNT_CREDENTIALS }}'
