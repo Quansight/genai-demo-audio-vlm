@@ -1,4 +1,5 @@
 import io
+import re
 
 import librosa
 import numpy as np
@@ -113,6 +114,30 @@ class AudioVLMPanel:
             self.image_pane.object = None
             self.audio_pane.object = None
             self.audio_pane.visible = False
+
+    @classmethod
+    def parse_points(cls, points_str: str):
+        # Regex to extract each <points> tag with multiple x and y pairs
+        point_tags = re.findall(r"<points (.*?)>(.*?)</points>", points_str)
+        if len(point_tags) == 0:
+            point_tags = re.findall(r"<point (.*?)>(.*?)</point>", points_str)
+        parsed_points = []
+        if len(point_tags) == 0:
+            return None
+
+        for attributes, label in point_tags:
+            coordinates = re.findall(r'x\d+="(.*?)" y\d+="(.*?)"', attributes)
+            if not coordinates:
+                single_coordinate = re.findall(r'x="(.*?)" y="(.*?)"', attributes)
+                if single_coordinate:
+                    coordinates = [single_coordinate[0]]
+            parsed_points.append(
+                {
+                    "label": label,
+                    "coordinates": [(float(x), float(y)) for x, y in coordinates],
+                }
+            )
+        return parsed_points
 
     def overlay_points(self, points_data):
         if self.file_dropper.value:
