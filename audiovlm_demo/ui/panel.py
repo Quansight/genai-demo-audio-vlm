@@ -227,6 +227,9 @@ class AudioVLMPanel:
                 image=image,
                 chat_history=self.build_chat_history(instance),
             )
+            points_data = self.parse_points(generated_text)
+            if points_data:
+                self.overlay_points(points_data)
             return generated_text
         elif self.toggle_group.value == "Aria":
             image_or_error_message = AudioVLMPanel.validate_image_input(

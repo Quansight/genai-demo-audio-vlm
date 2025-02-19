@@ -243,9 +243,6 @@ class AudioVLM:
             generated_tokens, skip_special_tokens=True
         )
 
-        points_data = self.parse_points(generated_text)
-        if points_data:
-            self.overlay_points(points_data)
         time.sleep(0.1)
         return generated_text
 
