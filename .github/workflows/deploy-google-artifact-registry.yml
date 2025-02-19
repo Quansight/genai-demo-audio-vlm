@@ -31,7 +31,7 @@ jobs:
         id: compute-image-tag
         run: |
           short_sha=$(git rev-parse --short ${{ github.sha }})
-          echo "tag=${{ vars.GCP_REGION }}-docker.pkg.dev/qai-demos/q-ai-demos/audiovlm-demo" >> $GITHUB_OUTPUT
+          echo "tag=${{ vars.GCP_REGION }}-docker.pkg.dev/qai-demos-491618/q-ai-demos/audiovlm-demo" >> $GITHUB_OUTPUT
           echo "short_sha=$short_sha" >> $GITHUB_OUTPUT          
 
       - name: Build Docker image
