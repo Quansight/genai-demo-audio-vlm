@@ -19,7 +19,7 @@ dependencies:
   - safetensors
   - tokenizers
   - torchtriton
-  - transformers
+  - transformers=4.46.2
   - pillow
   - einops
   - bokeh-root-cmd>=0.1.2
