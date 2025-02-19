@@ -1,0 +1,46 @@
+name: Build and push image to Google Artifact Registry
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    services:
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate into Google Cloud
+        id: google-auth
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_ARTIFACTS_REGISTRY_SERVICE_ACCOUNT_CREDENTIALS }}'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: network=host
+
+      - name: Compute image tag
+        id: compute-image-tag
+        run: |
+          short_sha=$(git rev-parse --short ${{ github.sha }})
+          echo "tag=${{ vars.GCP_REGION }}-docker.pkg.dev/qai-demos-491618/q-ai-demos/audiovlm-demo" >> $GITHUB_OUTPUT
+          echo "short_sha=$short_sha" >> $GITHUB_OUTPUT          
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          file: dockerfile
+          tags: |
+            ${{ steps.compute-image-tag.outputs.tag }}:${{ steps.compute-image-tag.outputs.short_sha }}
+            ${{ steps.compute-image-tag.outputs.tag }}:latest
+
