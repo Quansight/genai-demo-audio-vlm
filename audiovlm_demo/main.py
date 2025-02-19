@@ -9,7 +9,7 @@ def main():
     )
     A = AudioVLM(config=config)
     UI = AudioVLMPanel(engine=A)  # noqa: F841
-    return UI.servable()
+    return UI
 
 
 main()
