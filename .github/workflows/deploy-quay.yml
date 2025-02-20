@@ -1,4 +1,4 @@
-name: Build and push image to Google Artifact Registry
+name: Build and push image to Quay.io
 
 on:
   push:
