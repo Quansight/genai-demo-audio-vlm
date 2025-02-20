@@ -21,6 +21,7 @@ jobs:
         uses: 'google-github-actions/auth@v1'
         with:
           credentials_json: '${{ secrets.GCP_ARTIFACTS_REGISTRY_SERVICE_ACCOUNT_CREDENTIALS }}'
+
       - name: Login to Google Artifact Registry
         uses: docker/login-action@v2
         with:
@@ -41,7 +42,7 @@ jobs:
           echo "short_sha=$short_sha" >> $GITHUB_OUTPUT          
 
       - name: Build Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v3
         with:
           context: .
           push: true
