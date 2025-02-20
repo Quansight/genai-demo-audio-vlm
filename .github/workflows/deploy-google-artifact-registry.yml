@@ -39,7 +39,7 @@ jobs:
         with:
           context: .
           push: true
-          file: dockerfile
+          file: Dockerfile
           tags: |
             ${{ steps.compute-image-tag.outputs.tag }}:${{ steps.compute-image-tag.outputs.short_sha }}
             ${{ steps.compute-image-tag.outputs.tag }}:latest
